@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  code: MyString
+  source_code: MyString
+  source_sub_district_name: MyString
+  source_district_name: MyString
+  destination_code: MyString
+  destination_sub_district_name: MyString
+  destination_district_name: MyString
+  weekly_volume: 1
+  number_of_connectivity: 1
+  category: 1
+
+two:
+  code: MyString
+  source_code: MyString
+  source_sub_district_name: MyString
+  source_district_name: MyString
+  destination_code: MyString
+  destination_sub_district_name: MyString
+  destination_district_name: MyString
+  weekly_volume: 1
+  number_of_connectivity: 1
+  category: 1
