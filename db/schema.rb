@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151229045323) do
+ActiveRecord::Schema.define(version: 20151229064143) do
 
   create_table "collector_yards", force: :cascade do |t|
     t.string   "code"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20151229045323) do
     t.integer  "category"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+    t.integer  "species_type_id"
   end
 
   create_table "species_types", force: :cascade do |t|

@@ -28,9 +28,8 @@ require 'csv'
 # - category
 
 namespace :cs do
-  desc "Loading collector yards"
   task :load_cy => :environment do
-    i = 1
+    i = 0
     CSV.foreach(Rails.root.join('db', 'master_cy_lbm.csv'), :headers => true) do |row|
       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{i=i+1}, #{row["code"]}"
       cy = CollectorYard.where(:code => row["code"]).first_or_initialize
