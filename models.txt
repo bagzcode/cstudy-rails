@@ -1,0 +1,6 @@
+SpeciesType code name
+
+CollectorYard code code_old name owner_name address sub_district_name district_name longitude:float latitude:float is_cluster:boolean cluster_name category:integer
+
+Movement code source_code source_sub_district_name source_district_name destination_code destination_sub_district_name destination_district_name weekly_volume:integer number_of_connectivity:integer category:integer
+
