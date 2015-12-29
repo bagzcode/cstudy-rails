@@ -11,7 +11,7 @@ window.zoomBehavior = (canvas,projects) ->
   )
   canvas.call(zoom).on("dblclick.zoom", null)
 
-window.loadJktMap = (width,winHeight,jakartaHeight) ->
+window.loadJakartaMap = (width,winHeight,jakartaHeight) ->
   # Initialize canvas for jakarta map
   canvas = d3.select("#jakarta").append("svg")
     .attr("width", width)
@@ -36,6 +36,13 @@ window.loadJktMap = (width,winHeight,jakartaHeight) ->
       .style("stroke", "#555")
       .style("fill", "#f1f1f1")
       .style("stroke-width", "0.1")
+      .on("mouseover", ()->
+        areas.style("fill", "#f1f1f1")
+        d3.select(this).style("fill", "#e9e9e9")
+      )
+      .on("mouseout", () ->
+        areas.style("fill", "#f1f1f1")
+      )
     zoomBehavior(canvas,projection)
 
 window.loadJavaMap = (width,winHeight,javaHeight) ->
@@ -49,6 +56,11 @@ window.loadJavaMap = (width,winHeight,javaHeight) ->
   # Load json data from jakarta.json
   # Build java map
   d3.json "/map/java.json", (java) ->
+    # console.log java.features
+    # $.each(java.features, (i,v) ->
+    #   console.log v.properties.ID
+    # )
+
     group = canvas.selectAll("g.dis")
       .data(java.features)
       .enter()
@@ -59,21 +71,27 @@ window.loadJavaMap = (width,winHeight,javaHeight) ->
 
     areas = group.append("path")
       .attr("d", path)
-      .attr("class", "area")
+      .attr("class", "java-area")
       .style("stroke", "#555")
       .style("fill", "#ddd")
       .style("stroke-width", "0.1")
+      .on('click', (d) ->
+        console.log d.properties.KAB_KOTA
+        areas.style("fill", "#ddd")
+        d3.select(this).style("fill", "#f00")
+      )
+
     zoomBehavior(canvas,projection)
 
 $(document).ready ->
-  # Global variable
+  # Global variabel
   width = $("#maps").width()
   winHeight = $(window).height() - 50
   jakartaHeight = winHeight * 0.65
   javaHeight = winHeight * 0.35
 
   setMapsRatio(winHeight,jakartaHeight,javaHeight)
-  loadJktMap(width,winHeight,jakartaHeight)
+  loadJakartaMap(width,winHeight,jakartaHeight)
   loadJavaMap(width,winHeight,javaHeight)
 
 $(window).resize ->
