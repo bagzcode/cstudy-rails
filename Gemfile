@@ -50,3 +50,5 @@ gem 'bootstrap-sass'
 gem 'slim-rails'
 
 gem 'devise'
+
+gem 'has_scope'
