@@ -5,32 +5,28 @@
   = form_tag movements_path, method: "GET" do
 
     .row
+      .col-md-12
+        .form-group
+          label Search by name or code (or click on the map)
+          = text_field_tag "keyword", "", class: "form-control", data: { source: movements_path }
+
+    .row
       .col-md-4
         .form-group
           label Source
-          .radio
-            label
-              = radio_button_tag "source_type", "CY", true
-              = "CY"
-          .radio
-            label
-              = radio_button_tag "source_type", "Origin District", false
-              = "Origin District"
+          - %w(origin_district cy_code cy_sub_district).each_with_index do |item, index|
+            .radio
+              label
+                = radio_button_tag "source_type", item, (index == 0)
+                = item.titleize.upcase
       .col-md-4
         .form-group
           label Destination
-          .radio
-            label
-              = radio_button_tag "destination_type", "CY", true
-              = "CY"
-          .radio
-            label
-              = radio_button_tag "destination_type", "CY/LBM Sub District", false
-              = "CY/LBM Sub District"
-          .radio
-            label
-              = radio_button_tag "destination_type", "CY/LBM District", false
-              = "CY/LBM District"
+          - %w(collector_yards cy_sub_districts cy_districts).each_with_index do |item, index|
+            .radio
+              label
+                = radio_button_tag "destination_type", item, (index == 0)
+                = item.titleize.upcase
       .col-md-4
         .form-group
           label = "Species"
@@ -40,17 +36,8 @@
                 = check_box_tag "species_types[]", s.code, true
                 = s.code.blank? ? "<i>blank</i>".html_safe : s.code
 
-    .row
-      .col-md-12
-        .form-group
-          label Search by name or code (or click on the map)
-          = text_field_tag "source_name", "", class: "form-control"
-          = hidden_field_tag "source_code", ""
-          = hidden_field_tag "source_sub_district", ""
-          = hidden_field_tag "source_district", ""
-
-    = submit_tag "OK", class: "btn btn-primary"
-    = link_to "Clear", "#", class: "btn btn-link"
+    / = submit_tag "OK", class: "btn btn-primary"
+    / = link_to "Clear", "#", class: "btn btn-link"
 
 #result_wrapper
   .page-header

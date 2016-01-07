@@ -1,12 +1,10 @@
 class MovementsController < ApplicationController
-  has_scope :species_types, type: :array
-  has_scope :source_type
-  has_scope :destination_type
-  has_scope :source_code
-  has_scope :source_district
-  has_scope :source_sub_district
+  has_scope :autocomplete, :using => [:keyword, :source_type], :type => :hash
+
+  respond_to :json
 
   def index
-
+    @movements = apply_scopes(Movement).all
+    respond_with(@movements)
   end
 end

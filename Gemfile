@@ -52,3 +52,5 @@ gem 'slim-rails'
 gem 'devise'
 
 gem 'has_scope'
+
+gem 'jquery-ui-sass-rails'
