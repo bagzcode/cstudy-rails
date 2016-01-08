@@ -1,0 +1,12 @@
+$ffDefault: $font-family-sans-serif;
+$fsDefault: $font-size-base;
+
+.ui-menu-item{
+  a.ui-state-focus,
+  a.ui-state-hover,
+  a.ui-state-active{
+    border-color: $gray-lighter;
+    background: none;
+    background-color: $gray-lighter;
+  }
+}

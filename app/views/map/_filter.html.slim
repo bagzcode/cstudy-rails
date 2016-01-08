@@ -33,7 +33,7 @@
           - SpeciesType.all.each do |s|
             .checkbox
               label
-                = check_box_tag "species_types[]", s.code, true
+                = check_box_tag "species_types[]", s.id, true
                 = s.code.blank? ? "<i>blank</i>".html_safe : s.code
 
     / = submit_tag "OK", class: "btn btn-primary"
