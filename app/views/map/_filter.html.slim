@@ -49,9 +49,25 @@
           = hidden_field_tag "source_sub_district", ""
           = hidden_field_tag "source_district", ""
 
+      = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
+      = link_to "Sukabumi", "#", class: "btn btn-link btn-call-origin", data: { district: "SUKABUMI" }
+      = link_to "Bogor", "#", class: "btn btn-link btn-call-origin", data: { district: "BOGOR" }
+      = link_to "Tanggerang", "#", class: "btn btn-link btn-call-origin", data: { district: "TANGERANG" }
+
     = submit_tag "OK", class: "btn btn-primary"
-    = link_to "Clear", "#", class: "btn btn-link"
+    = link_to "Clear", root_path, class: "btn btn-link"
 
 #result_wrapper
   .page-header
     h3 Results
+  .row
+    .col-md-12#result_title
+  .row
+    .col-md-12#result_body
+      table.table.table-bordered
+        thead
+          tr.active
+            th Destination Code
+            th Destination District
+            th Destination Weekly Volume
+        tbody

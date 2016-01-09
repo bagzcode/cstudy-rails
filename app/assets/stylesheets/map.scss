@@ -2,6 +2,7 @@ $brand-primary: #673AB7;
 
 #maps{
   display: block;
+  position: relative;
   // background-color: $gray-lighter;
 
   #jakarta{
@@ -10,4 +11,19 @@ $brand-primary: #673AB7;
 
   #java{
   }
+}
+
+#line_canvas{
+  position: absolute;
+  // height: 100%;
+  // width: 100%;
+  top: 0px;
+  // bottom: 0px;
+  // right: 0px;
+  // padding: 0 15px 0 15px;
+}
+
+#result_body{
+  height: 350px;
+  overflow-y: scroll;
 }
