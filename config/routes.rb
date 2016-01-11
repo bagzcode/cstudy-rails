@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   get 'collector_yards/index'
 
-  get 'movements/index'
-
   get 'map/jakarta' => 'map#jakarta'
   get 'map/java' => 'map#java'
   get 'map/sub_district_jabodetabek' => 'map#sub_district_jabodetabek'

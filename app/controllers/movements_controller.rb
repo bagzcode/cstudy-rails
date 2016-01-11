@@ -12,6 +12,8 @@ class MovementsController < ApplicationController
   def show
     @movement = Movement.find(params[:id])
     @connections = @movement.find_connections_by_source_type_and_destination_type(params[:source_type], params[:destination_type])
-    respond_with(@connections)
+    respond_to do |format|
+      format.csv { send_data @connections.to_csv(@movement.category), filename: "connections.csv" }
+    end
   end
 end

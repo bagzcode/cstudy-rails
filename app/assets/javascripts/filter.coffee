@@ -1,5 +1,6 @@
 ready = ->
   source_type = ""
+  destination_type = ""
   species_types = []
 
   ac = $("#keyword").autocomplete
@@ -9,6 +10,11 @@ ready = ->
       selected = $("input[name='source_type']:checked")
       if selected.length > 0
         source_type = selected.val()
+
+      # set source_type
+      selected = $("input[name='destination_type']:checked")
+      if selected.length > 0
+        destination_type = selected.val()
 
       # set species array
       $("input[name='species_types[]']:checked").each ->
@@ -32,6 +38,7 @@ ready = ->
     focus: (event, ui) ->
       return
     select: (event, ui) ->
+      connectFromOrigin(ui.item.source_district_name, "movements/#{ui.item.id}.csv?source_type=#{source_type}&destination_type=#{destination_type}")
       return
     response: (event, ui) ->
       return

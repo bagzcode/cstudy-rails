@@ -1,6 +1,6 @@
 #filter_wrapper
-  .page-header
-    h3 Filter
+  / .page-header
+  h3 Filter
 
   = form_tag movements_path, method: "GET" do
 
@@ -11,7 +11,7 @@
           = text_field_tag "keyword", "", class: "form-control", data: { source: movements_path }
 
     .row
-      .col-md-4
+      .col-md-6
         .form-group
           label Source
           - %w(origin_district cy_code cy_sub_district).each_with_index do |item, index|
@@ -19,7 +19,7 @@
               label
                 = radio_button_tag "source_type", item, (index == 0)
                 = item.titleize.upcase
-      .col-md-4
+      .col-md-6
         .form-group
           label Destination
           - %w(collector_yards cy_sub_districts cy_districts).each_with_index do |item, index|
@@ -27,7 +27,8 @@
               label
                 = radio_button_tag "destination_type", item, (index == 0)
                 = item.titleize.upcase
-      .col-md-4
+    .row
+      .col-md-12
         .form-group
           label = "Species"
           - SpeciesType.all.each do |s|
@@ -35,14 +36,6 @@
               label
                 = check_box_tag "species_types[]", s.id, true
                 = s.code.blank? ? "<i>blank</i>".html_safe : s.code
-    .row
-      .col-md-12
-        .form-group
-          label Search by name or code (or click on the map)
-          = text_field_tag "source_name", "", class: "form-control"
-          = hidden_field_tag "source_code", ""
-          = hidden_field_tag "source_sub_district", ""
-          = hidden_field_tag "source_district", ""
 
       = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
       = link_to "Sukabumi", "#", class: "btn btn-link btn-call-origin", data: { district: "SUKABUMI" }
