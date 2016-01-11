@@ -1,53 +1,41 @@
 #filter_wrapper
-  .page-header
-    h3 Filter
+  / .page-header
+  h3 Filter
 
   = form_tag movements_path, method: "GET" do
-
-    .row
-      .col-md-4
-        .form-group
-          label Source
-          .radio
-            label
-              = radio_button_tag "source_type", "CY", true
-              = "CY"
-          .radio
-            label
-              = radio_button_tag "source_type", "Origin District", false
-              = "Origin District"
-      .col-md-4
-        .form-group
-          label Destination
-          .radio
-            label
-              = radio_button_tag "destination_type", "CY", true
-              = "CY"
-          .radio
-            label
-              = radio_button_tag "destination_type", "CY/LBM Sub District", false
-              = "CY/LBM Sub District"
-          .radio
-            label
-              = radio_button_tag "destination_type", "CY/LBM District", false
-              = "CY/LBM District"
-      .col-md-4
-        .form-group
-          label = "Species"
-          - SpeciesType.all.each do |s|
-            .checkbox
-              label
-                = check_box_tag "species_types[]", s.code, true
-                = s.code.blank? ? "<i>blank</i>".html_safe : s.code
 
     .row
       .col-md-12
         .form-group
           label Search by name or code (or click on the map)
-          = text_field_tag "source_name", "", class: "form-control"
-          = hidden_field_tag "source_code", ""
-          = hidden_field_tag "source_sub_district", ""
-          = hidden_field_tag "source_district", ""
+          = text_field_tag "keyword", "", class: "form-control", data: { source: movements_path }
+
+    .row
+      .col-md-6
+        .form-group
+          label Source
+          - %w(origin_district cy_code cy_sub_district).each_with_index do |item, index|
+            .radio
+              label
+                = radio_button_tag "source_type", item, (index == 0)
+                = item.titleize.upcase
+      .col-md-6
+        .form-group
+          label Destination
+          - %w(collector_yards cy_sub_districts cy_districts).each_with_index do |item, index|
+            .radio
+              label
+                = radio_button_tag "destination_type", item, (index == 0)
+                = item.titleize.upcase
+    .row
+      .col-md-12
+        .form-group
+          label = "Species"
+          - SpeciesType.all.each do |s|
+            .checkbox
+              label
+                = check_box_tag "species_types[]", s.id, true
+                = s.code.blank? ? "<i>blank</i>".html_safe : s.code
 
       = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
       = link_to "Sukabumi", "#", class: "btn btn-link btn-call-origin", data: { district: "SUKABUMI" }
@@ -56,18 +44,3 @@
 
     = submit_tag "OK", class: "btn btn-primary"
     = link_to "Clear", root_path, class: "btn btn-link"
-
-#result_wrapper
-  .page-header
-    h3 Results
-  .row
-    .col-md-12#result_title
-  .row
-    .col-md-12#result_body
-      table.table.table-bordered
-        thead
-          tr.active
-            th Destination Code
-            th Destination District
-            th Destination Weekly Volume
-        tbody

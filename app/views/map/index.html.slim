@@ -23,4 +23,14 @@ nav.navbar.navbar-inverse.navbar-fixed-bottom
         .col-md-12#java
       #line_canvas
     .col-md-4 id="data"
-      = render 'filter'
+      br
+      ul.nav.nav-tabs role="tablist"
+        li role="presentation" class="active"
+          a href="#filter" aria-controls="#filter" role="tab" data-toggle="tab" Filter
+        li role="presentation"
+          a href="#result" aria-controls="#result" role="tab" data-toggle="tab" Result
+      .tab-content
+        .tab-pane role="tabpanel" id="filter" class="active"
+          = render 'filter'
+        .tab-pane role="tabpanel" id="result"
+          = render 'result'
