@@ -94,22 +94,31 @@ window.loadJavaMap = (width,winHeight,javaHeight) ->
           .attr("title", d.properties.KAB_KOTA)
 
 window.updateCollectorYards = () ->
-  window.jakartaCanvas.selectAll(".collector-yards")
-    .attr("fill", (d) ->
-      if isSelected({code: d3.select(this).attr("code")})
-        d3.select(this).attr("fill")
-      else
-        "#f0f0f0"
-    )
+  destinationCy = [];
+  sourceCy = null;
 
-# Nano
-# window.updateCollectorYards = () ->
-#   collectorYardsAll = $(".collector-yards")
-#   for cya in collectorYardsAll
-#     if isSelected({code: d3.select(cya).attr("code")})
-#       d3.select(cya).attr("class", "collector-yards")
-#     else
-#       d3.select(cya).attr("class", "hidden")
+  allCy = d3.selectAll(".collector-yards")
+  allCy.each (d) ->
+    if isSelected({code: d3.select(this).attr("code")})
+      d3.select(this).attr("class", "collector-yards")
+      destinationCy.push(d3.select(this))
+    else if d3.select(this).attr("selected") is "true"
+      sourceCy = d3.select(this)
+      d3.select(this).attr("class", "collector-yards")
+    else
+      d3.select(this).attr("class", "collector-yards hidden")
+  
+  for dcy in destinationCy
+    x1 = (sourceCy.node().getBBox().x)+(rectSize/2)
+    y1 = (sourceCy.node().getBBox().y)+(rectSize/2)
+    if dcy.attr("type") is "CY"
+      x2 = parseInt(dcy.attr("x"))+(rectSize/2)
+      y2 = parseInt(dcy.attr("y"))+(rectSize/2)
+    else if dcy.attr("type") is "LBM"
+      x2 = dcy.attr("cx")
+      y2 = dcy.attr("cy")
+    drawConnectorLine([x1, y1],[x2, y2], window.jakartaCanvas, dcy.attr("code"))
+
 
 window.findDestination = (code) ->
   result = []
@@ -119,8 +128,6 @@ window.findDestination = (code) ->
   result
 
 window.isSelected = (d) ->
-  # console.log("DEST", window.destinations)
-  # console.log("LEN", window.destinations.length)
   if window.destinations.length is 0
     return true
   for destination in window.destinations
@@ -131,6 +138,8 @@ window.isSelected = (d) ->
 
 window.loadCollectorYards = () ->
   onClick = () ->
+    d3.selectAll(".collector-yards").attr("selected", null)
+    d3.select(this).attr("selected", true)
     window.selectedCode = d3.select(this).attr("code")
     window.destinations = findDestination(window.selectedCode)
     updateCollectorYards()
@@ -143,8 +152,10 @@ window.loadCollectorYards = () ->
     .attr("r", circleRadius)
     .attr("cx", (d) -> window.jakartaProjection([d.X, d.Y])[0] )
     .attr("cy", (d) -> window.jakartaProjection([d.X, d.Y])[1] )
-    .attr("code", (d,i) -> d.code)
-    .attr("fill", "red")
+    .attr("code", (d) -> d.code)
+    .attr("type", (d) -> d.type)
+    .style("fill", "red")
+    .style("opacity", 0.5)
     .attr("class", "collector-yards")
     .on("mouseover", () ->
       d3.select(this).attr("cursor", "pointer")
@@ -158,10 +169,12 @@ window.loadCollectorYards = () ->
     .filter((d) -> d.type is "CY")
     .attr("x", (d) -> window.jakartaProjection([d.X, d.Y])[0] )
     .attr("y", (d) -> window.jakartaProjection([d.X, d.Y])[1] )
-    .attr("code", (d,i) -> d.code)
+    .attr("code", (d) -> d.code)
+    .attr("type", (d) -> d.type)
     .attr("width", rectSize)
     .attr("height", rectSize)
-    .attr("fill", "green")
+    .style("fill", "green")
+    .style("opacity", 0.5)
     .attr("class", "collector-yards")
     .on("mouseover", () ->
       d3.select(this).attr("cursor", "pointer")
@@ -171,6 +184,16 @@ window.loadCollectorYards = () ->
 window.loadSubDistrict = () ->
   # fungsi untuk sub district
 
+# DARI CY KE CY/LBM
+window.connectToCy = (code) ->
+
+# DARI CY KE CY/LBM SUB DISTRICT
+# window.connectToCySubDistrict = (code) ->
+
+# DARI CY KE CY/LBM DISTRICT
+# window.connectToCyDistrict = (code) ->
+
+# DARI ORIGIN DISTRICT KE CY/DISTRICT CY/SUB DISTRICT CY
 # Fungsi untuk menkoneksikan antara Origin District dengan CY di peta Jabodetabek
 # Jika fungsi ini akan di panggil dari respond js controller,
 # tambahkan parameter data hasil filter ke dalam fungsi ini
@@ -338,12 +361,13 @@ window.connectFromOrigin = (district_name) ->
 window.activeConnectorLine = (code) ->
   connctor_line = $("line.connector-line")
   connctor_line.each (i,d) ->
-    d3.select(d).style("stroke", "#444")
+    d3.select(d).style("stroke", "#444").style("opacity", 0.5)
     if d3.select(d).attr("code") is code
       originX2 = d3.select(d).attr("x2")
       originY2 = d3.select(d).attr("y2")
       d3.select(d)
         .style("stroke", "#f00")
+        .style("opacity", 1)
         .attr({x2: d3.select(d).attr("x1"), y2: d3.select(d).attr("y1")})
         .transition()
           .duration(1000)
