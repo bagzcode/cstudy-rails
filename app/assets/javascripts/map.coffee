@@ -199,10 +199,10 @@ window.connectToJabodetabekCy = (originDistrict, dot, canvas) ->
 window.connectToJabodetabekSubDistrict = () ->
   # Untuk menghilangkan circle dari district di peta jabodetabek
   d3.selectAll(".dot-district-jabodetabek").remove()
-  
+
   # Untuk hidden semau CY di peta jabodetabek
   d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
-  
+
   alert("Sub District Coordinate is Not Available")
 
 # Fungsi untuk menkoneksikan antara Origin District dengan CY di peta Jabodetabek
@@ -221,7 +221,7 @@ window.connectToJabodetabekDistrict = (originDistrict, dot, canvas) ->
           # Untuk menambahkan element "g" yang akan meng-group circle di pusat District peta Jabodetabek yang di append di window.jakartaCanvas
           jabodetabekDistrictDot = window.jakartaCanvas.append("g")
             .attr("class", "dot-district-jabodetabek")
-          
+
           # Menambahkan circle di pusat District peta Jabodetabek
           jabodetabekDistrictDot.append("circle")
             .attr("cx", window.jakartaPath.centroid(d)[0])
@@ -289,7 +289,7 @@ window.appendResult = (target, data, type) ->
     content += "</tr>"
   else if type == "source"
     content = "<h4>Source: #{data}</h4>"
-  
+
   target.append(content)
 
 # Fungsi untuk memanggil Origin District di peta Jawa
@@ -301,10 +301,10 @@ window.connectFromOrigin = (district_name) ->
 
   # Untuk mengkosongkan html elemen #line_canvas
   d3.select("#line_canvas").html("")
-  
+
   # Untuk mengkosongkan html elemen result data
   $("#result_body table tbody").html("")
-  
+
   # Mendiklarasikan variabel lineCanvas
   lineCanvas = d3.select("#line_canvas").append("svg")
     .attr("height", $(window).height() - 50)
@@ -314,7 +314,7 @@ window.connectFromOrigin = (district_name) ->
   javaAsd = d3.selectAll(".java-area")
   javaAsd.each (d) ->
     d3.select(this).style("fill", "#e9e5dc")
-    
+
     # Membuat titik tengah dari District pada peta Jawa
     dot = window.javaCanvas.append("circle")
       .attr("class", "center-dot-district")
@@ -327,14 +327,14 @@ window.connectFromOrigin = (district_name) ->
     if d.properties.KAB_KOTA is district_name
       centralizeSelectedArea(window.javaCanvas, window.javaPath, d)
       d3.select(this).style("fill", "#428bca")
-      if $("#destination_type_CY").is(":checked")
+      if $("#destination_type_collector_yards").is(":checked")
         connectToJabodetabekCy(d.properties.KAB_KOTA, dot, lineCanvas)
-      else if $("#destination_type_CY_LBM_Sub_District").is(":checked")
+      else if $("#destination_type_cy_sub_districts").is(":checked")
         connectToJabodetabekSubDistrict(d.properties.KAB_KOTA, dot, lineCanvas)
-      else if $("#destination_type_CY_LBM_District").is(":checked")
+      else if $("#destination_type_cy_districts").is(":checked")
         connectToJabodetabekDistrict(d.properties.KAB_KOTA, dot, lineCanvas)
 
-# Fungsi untuk mengaktifkan garis penghubung saat klik data hasil koneksi 
+# Fungsi untuk mengaktifkan garis penghubung saat klik data hasil koneksi
 window.activeConnectorLine = (code) ->
   connctor_line = $("line.connector-line")
   connctor_line.each (i,d) ->
