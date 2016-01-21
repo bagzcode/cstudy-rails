@@ -1,6 +1,6 @@
 class MovementsController < ApplicationController
   has_scope :autocomplete, :using => [:keyword, :source_type], :type => :hash
-  has_scope :species_types, :type => :array
+  # has_scope :species_types, :type => :array
 
   respond_to :json
 

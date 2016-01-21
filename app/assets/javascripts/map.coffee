@@ -145,15 +145,20 @@ window.findDestination = (code) ->
 
 # DARI CY KE CY/LBM/CY SUB DISTRICT/CY DISTRICT
 # Fungsi untuk menkoneksikan antara CY dengan CY/LBM di peta Jabodetabek
-window.connectToCy = (param) ->
+# Parameters:
+# - param (string): selected source code or CY/LBM code
+# - connections (array): Array of Movement object
+window.connectToCy = (param, connections) ->
+  console.log "connections: ", connections
+
   destinationCy = [];
 
   isSelected = (d) ->
-    if window.destinations.length is 0
+    if connections.length is 0
       return true
-    for destination in window.destinations
-      console.log("isSelected", d.code is destination.destination_LBM_CY_id)
-      if d.code is destination.destination_LBM_CY_id
+    for c in connections
+      console.log("isSelected", d.code is c.destination_LBM_CY_id)
+      if d.code is c.destination_LBM_CY_id
         return true
     return false
 
@@ -163,7 +168,7 @@ window.connectToCy = (param) ->
       destinationCy.push(d3.select(this))
     else
       d3.select(this).attr("class", "collector-yards hidden")
-  
+
   # Menampilkan selected CY, setelah semua CY di tambahkan class: hidden
   param.attr("class", "collector-yards")
 
@@ -192,22 +197,25 @@ window.connectToCySubDistrict = (param) ->
   alert("Sub District Coordinate is Not Available")
 
 # Fungsi untuk menkoneksikan antara CY dengan CY District di peta Jabodetabek
-window.connectToCyDistrict = (param) ->
+# Parameters:
+# - param (string): selected source code or CY/LBM code
+# - connections (array): Array of Movement object
+window.connectToCyDistrict = (param, connections) ->
   # Untuk hidden semau CY di peta jabodetabek
   d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
 
   # Menampilkan selected CY, setelah semua CY di tambahkan class: hidden
   param.attr("class", "collector-yards")
-  
+
   d3.selectAll(".jabodetabek-area").each (d) ->
-    for destination in window.destinations
-      if destination.destination_district is d.properties.KAB_KOTA
+    for c in connections
+      if c.destination_district is d.properties.KAB_KOTA
         jbdtbPoint = jabodetabekPointDistrict(d)
         x1 = parseInt(param.node().getBBox().x)+(rectSize/2)
         y1 = parseInt(param.node().getBBox().y)+(rectSize/2)
         x2 = jbdtbPoint.node().getBBox().x+4
         y2 = jbdtbPoint.node().getBBox().y+4
-        drawConnectorLine([x1, y1],[x2, y2], window.jakartaCanvas, destination.origin_code)
+        drawConnectorLine([x1, y1],[x2, y2], window.jakartaCanvas, c.origin_code)
 
 # DARI ORIGIN DISTRICT KE CY/DISTRICT CY/SUB DISTRICT CY
 # Fungsi untuk menkoneksikan antara Origin District dengan CY di peta Jabodetabek
@@ -215,15 +223,20 @@ window.connectToCyDistrict = (param) ->
 # tambahkan parameter data hasil filter ke dalam fungsi ini
 # Saat ini untuk menampilkan CY yang terkait dengan origin menggunakan data
 # window.movementIn yang di-filter dengan "if"
-window.connectToJabodetabekCy = (originDistrict, dot, canvas) ->
+# Parameters:
+# - originDistrict
+# - dot
+# - canvas
+# - connections
+window.connectToJabodetabekCy = (originDistrict, dot, canvas, connections) ->
   # Untuk menghilangkan circle dari district di peta Jabodetabek
   d3.selectAll(".dot-district-jabodetabek").remove()
 
   # Untuk hidden semau CY di peta jabodetabek
   d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
 
-  for mi in window.movementIn
-    if mi.origin_district is originDistrict
+  for mi in connections
+    if mi.origin_district is originDistrict # note neccessary because 'connections' already containes filtered values
       collectorYardsCode = d3.selectAll(".collector-yards")
       collectorYardsCode.each (d) ->
         if d.code is mi.destination_code
@@ -249,11 +262,17 @@ window.connectToJabodetabekSubDistrict = () ->
 # tambahkan parameter data hasil filter ke dalam fungsi ini
 # Saat ini untuk menampilkan District yang terkait dengan Origin District menggunakan data
 # window.movementIn yang di-filter dengan "if"
-window.connectToJabodetabekDistrict = (originDistrict, dot, canvas) ->
+# Parameters:
+# - originDistrict
+# - dot
+# - canvas
+# - connections
+window.connectToJabodetabekDistrict = (originDistrict, dot, canvas, connections) ->
   # Untuk hidden semau CY di peta jabodetabek
   d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
   district = d3.selectAll(".jabodetabek-area")
-  for mi in window.movementIn
+
+  for mi in connections
     if originDistrict is mi.origin_district
       district.each (d) ->
         if d.properties.KAB_KOTA is mi.destination_district
@@ -325,8 +344,10 @@ window.appendResult = (target, data, type) ->
 
 # Fungsi untuk memanggil Origin District di peta Jawa
 # Mungkin fungsi ini akan di-panggil saat klik pilihan di autocomplete
-# Parameter district_name: string, untuk memanggil path district yang sesuai dengan district_name yang dikirim
-window.connectFromOrigin = (district_name) ->
+# Parameters:
+# - district_name: string, untuk memanggil path district yang sesuai dengan district_name yang dikirim
+# - connections: array (of movements object)
+window.connectFromOrigin = (district_name, connections) ->
   # Untuk menghilangkan circle dari district di peta jabodetabek
   d3.selectAll(".center-dot-district").remove()
 
@@ -359,13 +380,16 @@ window.connectFromOrigin = (district_name) ->
       centralizeSelectedArea(window.javaCanvas, window.javaPath, d)
       d3.select(this).style("fill", "#428bca")
       if $("#destination_type_collector_yards").is(":checked")
-        connectToJabodetabekCy(d.properties.KAB_KOTA, dot, lineCanvas)
+        connectToJabodetabekCy(d.properties.KAB_KOTA, dot, lineCanvas, connections)
       else if $("#destination_type_cy_sub_districts").is(":checked")
-        connectToJabodetabekSubDistrict(d.properties.KAB_KOTA, dot, lineCanvas)
+        connectToJabodetabekSubDistrict(d.properties.KAB_KOTA, dot, lineCanvas, connections)
       else if $("#destination_type_cy_districts").is(":checked")
-        connectToJabodetabekDistrict(d.properties.KAB_KOTA, dot, lineCanvas)
+        connectToJabodetabekDistrict(d.properties.KAB_KOTA, dot, lineCanvas, connections)
 
-window.connectFromCy = (cy_code) ->
+# Parameters:
+# - cy_code: string
+# - connections: array (of movements object)
+window.connectFromCy = (cy_code, connections) ->
   selectedCy = null;
   $("#result_body table tbody").html("")
   d3.selectAll("line.connector-line").remove()
@@ -378,13 +402,14 @@ window.connectFromCy = (cy_code) ->
     else
       d3.select(this).attr("selected", null)
   window.selectedCode = cy_code
-  window.destinations = findDestination(window.selectedCode)
+  console.log "data_url: ", data_url
+
   if $("#destination_type_collector_yards").is(":checked")
-    connectToCy(selectedCy)
+    connectToCy(selectedCy, connections)
   else if $("#destination_type_cy_sub_districts").is(":checked")
-    connectToCySubDistrict(selectedCy)
+    connectToCySubDistrict(selectedCy, connections)
   else if $("#destination_type_cy_districts").is(":checked")
-    connectToCyDistrict(selectedCy)
+    connectToCyDistrict(selectedCy, connections)
 
 # Fungsi untuk mengaktifkan garis penghubung saat klik data hasil koneksi
 window.activeConnectorLine = (code) ->
@@ -433,12 +458,12 @@ ready = ->
   $("body").on "click", ".btn-call-origin", (e) ->
     e.preventDefault()
     district = $(this).data "district"
-    connectFromOrigin(district)
+    connectFromOrigin(district, window.movementIn)
 
   $("body").on "click", ".btn-call-cy", (e) ->
     e.preventDefault()
     code = $(this).data "code"
-    connectFromCy(code)
+    connectFromCy(code, window.movementOut)
 
   # Untuk percobaan
   $("body").on "click", ".result-data", (e) ->

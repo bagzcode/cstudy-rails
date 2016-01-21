@@ -1,36 +1,32 @@
-ready = ->
-  source_type = ""
-  destination_type = ""
-  species_types = []
+# Get checked radio buttons by name
+window.getSelectedRadioButton = (name) ->
+  selected = $("input[name='#{name}']:checked")
+  if selected.length > 0
+    return selected.val()
+  return null
 
+# Get checked checkboxes by name
+window.getSelectedCheckBoxes = (name) ->
+  result = []
+  $("input[name='#{name}']:checked").each ->
+    result.push($(this).val())
+  return result
+
+ready = ->
+
+  # Autocomplete on filter
   ac = $("#keyword").autocomplete
     minLength: 1
     source: (request, response) ->
-      # set source_type
-      selected = $("input[name='source_type']:checked")
-      if selected.length > 0
-        source_type = selected.val()
-
-      # set source_type
-      selected = $("input[name='destination_type']:checked")
-      if selected.length > 0
-        destination_type = selected.val()
-
-      # set species array
-      $("input[name='species_types[]']:checked").each ->
-        species_types.push($(this).val())
-
-      console.log "tes", species_types
-
-      # send request
       $.ajax
         url: $("#keyword").data("source")
         dataType: 'json'
         data:
           autocomplete:
             keyword: request.term
-            source_type: source_type
-          species_types: species_types
+            source_type: getSelectedRadioButton('source_type')
+            destination_type: getSelectedRadioButton('destination_type')
+          species_types: getSelectedCheckBoxes('species_types[]')
         success: (data) ->
           response data
           return
@@ -38,7 +34,17 @@ ready = ->
     focus: (event, ui) ->
       return
     select: (event, ui) ->
-      connectFromOrigin(ui.item.source_district_name, "movements/#{ui.item.id}.csv?source_type=#{source_type}&destination_type=#{destination_type}")
+      source_type = getSelectedRadioButton('source_type')
+      destination_type = getSelectedRadioButton('destination_type')
+
+      console.log source_type, ", ", destination_type
+
+      if source_type is "cy_code"
+        console.log "action", "connectFromCy"
+        connectFromCy(ui.item.source_code, "/movements/#{ui.item.id}.csv?source_type=#{source_type}&destination_type=#{destination_type}")
+      else
+        console.log "action", "connectFromOrigin"
+        connectFromOrigin(ui.item.source_district_name, "/movements/#{ui.item.id}.csv?source_type=#{source_type}&destination_type=#{destination_type}")
       return
     response: (event, ui) ->
       return
@@ -46,8 +52,9 @@ ready = ->
   # patient autocomplete menu formater
   unless ac.data("ui-autocomplete") is undefined
     show_patient_path = $("#show_patient_path").val()
-    ac.data("ui-autocomplete")._renderItem = (ul, item) ->
+    source_type = getSelectedRadioButton('source_type')
 
+    ac.data("ui-autocomplete")._renderItem = (ul, item) ->
       content = "<a href='#'>"
       if item.category is "in"
         content += "<strong>#{ item.source_district_name }</strong>"

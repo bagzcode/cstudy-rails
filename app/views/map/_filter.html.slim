@@ -37,12 +37,12 @@
                 = check_box_tag "species_types[]", s.id, true
                 = s.code.blank? ? "<i>blank</i>".html_safe : s.code
 
-      = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
-      = link_to "Sukabumi", "#", class: "btn btn-link btn-call-origin", data: { district: "SUKABUMI" }
-      = link_to "Bogor", "#", class: "btn btn-link btn-call-origin", data: { district: "BOGOR" }
-      = link_to "Tanggerang", "#", class: "btn btn-link btn-call-origin", data: { district: "TANGERANG" }
-      = link_to "D-BGR-195", "#", class: "btn btn-link btn-call-cy", data: { code: "D-BGR-195" }
-      = link_to "D-BGR-073", "#", class: "btn btn-link btn-call-cy", data: { code: "D-BGR-073" }
+      / = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
+      / = link_to "Sukabumi", "#", class: "btn btn-link btn-call-origin", data: { district: "SUKABUMI" }
+      / = link_to "Bogor", "#", class: "btn btn-link btn-call-origin", data: { district: "BOGOR" }
+      / = link_to "Tanggerang", "#", class: "btn btn-link btn-call-origin", data: { district: "TANGERANG" }
+      / = link_to "D-BGR-195", "#", class: "btn btn-link btn-call-cy", data: { code: "D-BGR-195" }
+      / = link_to "D-BGR-073", "#", class: "btn btn-link btn-call-cy", data: { code: "D-BGR-073" }
 
-    = submit_tag "OK", class: "btn btn-primary"
-    = link_to "Clear", root_path, class: "btn btn-link"
+    / = submit_tag "OK", class: "btn btn-primary"
+    / = link_to "Clear", root_path, class: "btn btn-link"
