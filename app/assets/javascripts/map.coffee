@@ -15,6 +15,7 @@ window.rectSize = 10;
 
 window.selectedCode = null;
 window.destinations = [];
+window.origins = [];
 
 window.setMapsRatio = (winHeight,jakartaHeight,javaHeight) ->
   $("#jakarta").height(jakartaHeight)
@@ -119,6 +120,8 @@ window.loadCollectorYards = () ->
     .style("fill", "green")
     .style("opacity", 0.5)
     .attr("class", "collector-yards")
+
+  connectAllCyToCy()
 
 window.loadSubDistrict = () ->
   # fungsi untuk load sub district
@@ -302,6 +305,7 @@ window.drawConnectorLine = (x,y,canvas,data) ->
     .attr("y1", x[1])
     .attr("y2", x[1])
     .style("stroke", "#444")
+    .style("opacity", 0.5)
     .transition()
       .duration(800)
       .ease("linear")
@@ -432,10 +436,42 @@ window.activeConnectorLine = (code) ->
           .ease("linear")
           .attr({x2: originX2, y2: originY2})
 
-window.connectAllCyToCy = (data) ->
+window.connectAllCyToCy = ->
   console.log "masuk.."
-  data.each (d) ->
-    console.log d
+  d3.selectAll(".collector-yards").each (d) ->
+    if d3.select(this).attr("type") == "CY"
+      x1 = parseInt(d3.select(this).attr("x"))+(rectSize/2)
+      y1 = parseInt(d3.select(this).attr("y"))+(rectSize/2)
+      for mo in window.movementOut
+        if mo.origin_code is d3.select(this).attr("code")
+          dst = window.jakartaProjection([mo.destination_X, mo.destination_Y])
+          window.jakartaCanvas.append("rect")
+            .attr("x", dst[0] )
+            .attr("y", dst[1] )
+            .attr("code", mo.origin_code)
+            .attr("type", "CY")
+            .attr("width", rectSize)
+            .attr("height", rectSize)
+            .style("fill", "green")
+            .style("opacity", 0.5)
+            .attr("class", "collector-yards")
+          drawConnectorLine([x1, y1], [(dst[0]+(rectSize/2)), (dst[1]+(rectSize/2))], window.jakartaCanvas, mo.origin_code)
+    else
+      x1 = d3.select(this).attr("cx")
+      y1 = d3.select(this).attr("cy")
+      for mo in window.movementOut
+        if mo.origin_code is d3.select(this).attr("code")
+          dst = window.jakartaProjection([mo.destination_X, mo.destination_Y])
+          window.jakartaCanvas.append("circle")
+            .attr("r", circleRadius)
+            .attr("cx", dst[0] )
+            .attr("cy", dst[1] )
+            .attr("code", mo.origin_code)
+            .attr("type", "LBM")
+            .style("fill", "red")
+            .style("opacity", 0.5)
+            .attr("class", "collector-yards")
+          drawConnectorLine([x1, y1], dst, window.jakartaCanvas, mo.origin_code)   
 
 ready = ->
   # Global variabel
@@ -447,12 +483,11 @@ ready = ->
   # d3.csv "/map/movement_in.csv", (result) ->
   #   window.movementIn = result
 
-  # d3.csv "/map/movement_out.csv", (result) ->
-  #   window.movementOut = result
+  d3.csv "/map/movement_out.csv", (result) ->
+    window.movementOut = result
 
   d3.csv "/map/collector_yards.csv", (collectorYards) ->
     window.collectorYards = collectorYards
-    connectAllCyToCy(collectorYards)
 
   window.jakartaProjection = d3.geo.mercator().rotate([-105.88,5.87,0]).scale(width*30).translate([0, 0])
   window.jakartaPath = d3.geo.path().projection(window.jakartaProjection)
