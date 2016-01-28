@@ -92,36 +92,35 @@ window.loadJavaMap = (width,winHeight,javaHeight) ->
           .attr("title", d.properties.KAB_KOTA)
 
 window.loadCollectorYards = () ->
-  window.jakartaCanvas.selectAll("circle.collector-yards")
-    .data(window.collectorYards)
-    .enter()
-    .append("circle")
-    .filter((d) -> d.type is "LBM")
-    .attr("r", circleRadius)
-    .attr("cx", (d) -> window.jakartaProjection([d.X, d.Y])[0] )
-    .attr("cy", (d) -> window.jakartaProjection([d.X, d.Y])[1] )
-    .attr("code", (d) -> d.code)
-    .attr("type", (d) -> d.type)
-    .style("fill", "red")
-    .style("opacity", 0.5)
-    .attr("class", "collector-yards")
+  d3.csv "/map/collector_yards.csv", (result) ->
+    window.jakartaCanvas.selectAll("circle.collector-yards")
+      .data(result)
+      .enter()
+      .append("circle")
+      .filter((d) -> d.type is "LBM")
+      .attr("r", circleRadius)
+      .attr("cx", (d) -> window.jakartaProjection([d.X, d.Y])[0] )
+      .attr("cy", (d) -> window.jakartaProjection([d.X, d.Y])[1] )
+      .attr("code", (d) -> d.code)
+      .attr("type", (d) -> d.type)
+      .style("fill", "red")
+      .style("opacity", 0.5)
+      .attr("class", "collector-yards")
 
-  window.jakartaCanvas.selectAll("rect.collector-yards")
-    .data(window.collectorYards)
-    .enter()
-    .append("rect")
-    .filter((d) -> d.type is "CY")
-    .attr("x", (d) -> window.jakartaProjection([d.X, d.Y])[0] )
-    .attr("y", (d) -> window.jakartaProjection([d.X, d.Y])[1] )
-    .attr("code", (d) -> d.code)
-    .attr("type", (d) -> d.type)
-    .attr("width", rectSize)
-    .attr("height", rectSize)
-    .style("fill", "green")
-    .style("opacity", 0.5)
-    .attr("class", "collector-yards")
-
-  connectAllCyToCy()
+    window.jakartaCanvas.selectAll("rect.collector-yards")
+      .data(result)
+      .enter()
+      .append("rect")
+      .filter((d) -> d.type is "CY")
+      .attr("x", (d) -> window.jakartaProjection([d.X, d.Y])[0] )
+      .attr("y", (d) -> window.jakartaProjection([d.X, d.Y])[1] )
+      .attr("code", (d) -> d.code)
+      .attr("type", (d) -> d.type)
+      .attr("width", rectSize)
+      .attr("height", rectSize)
+      .style("fill", "green")
+      .style("opacity", 0.5)
+      .attr("class", "collector-yards")
 
 window.loadSubDistrict = () ->
   # fungsi untuk load sub district
@@ -145,150 +144,6 @@ window.findDestination = (code) ->
     if mo.origin_code is code
       result.push(mo)
   return result
-
-# DARI CY KE CY/LBM/CY SUB DISTRICT/CY DISTRICT
-# Fungsi untuk menkoneksikan antara CY dengan CY/LBM di peta Jabodetabek
-# Parameters:
-# - param (string): selected source code or CY/LBM code
-# - connections (array): Array of Movement object
-window.connectToCy = (param, connections) ->
-  console.log "connections: ", connections
-
-  destinationCy = [];
-
-  isSelected = (d) ->
-    if connections.length is 0
-      return true
-    for c in connections
-      console.log("isSelected", d.code is c.destination_LBM_CY_id)
-      if d.code is c.destination_LBM_CY_id
-        return true
-    return false
-
-  d3.selectAll(".collector-yards").each (d) ->
-    if isSelected({code: d3.select(this).attr("code")})
-      d3.select(this).attr("class", "collector-yards")
-      destinationCy.push(d3.select(this))
-    else
-      d3.select(this).attr("class", "collector-yards hidden")
-
-  # Menampilkan selected CY, setelah semua CY di tambahkan class: hidden
-  param.attr("class", "collector-yards")
-
-  for dcy in destinationCy
-    x1 = (param.node().getBBox().x)+(rectSize/2)
-    y1 = (param.node().getBBox().y)+(rectSize/2)
-    if dcy.attr("type") is "CY"
-      x2 = parseInt(dcy.attr("x"))+(rectSize/2)
-      y2 = parseInt(dcy.attr("y"))+(rectSize/2)
-    else if dcy.attr("type") is "LBM"
-      x2 = dcy.attr("cx")
-      y2 = dcy.attr("cy")
-    drawConnectorLine([x1, y1],[x2, y2], window.jakartaCanvas, dcy.attr("code"))
-
-# Fungsi untuk menkoneksikan antara CY dengan CY Sub District di peta Jabodetabek
-window.connectToCySubDistrict = (param) ->
-  # Untuk menghilangkan circle dari district di peta jabodetabek
-  d3.selectAll(".dot-district-jabodetabek").remove()
-
-  # Untuk hidden semau CY di peta jabodetabek
-  d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
-
-  # Menampilkan selected CY, setelah semua CY di tambahkan class: hidden
-  param.attr("class", "collector-yards")
-
-  alert("Sub District Coordinate is Not Available")
-
-# Fungsi untuk menkoneksikan antara CY dengan CY District di peta Jabodetabek
-# Parameters:
-# - param (string): selected source code or CY/LBM code
-# - connections (array): Array of Movement object
-window.connectToCyDistrict = (param, connections) ->
-  # Untuk hidden semau CY di peta jabodetabek
-  d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
-
-  # Menampilkan selected CY, setelah semua CY di tambahkan class: hidden
-  param.attr("class", "collector-yards")
-
-  d3.selectAll(".jabodetabek-area").each (d) ->
-    for c in connections
-      if c.destination_district is d.properties.KAB_KOTA
-        jbdtbPoint = jabodetabekPointDistrict(d)
-        x1 = parseInt(param.node().getBBox().x)+(rectSize/2)
-        y1 = parseInt(param.node().getBBox().y)+(rectSize/2)
-        x2 = jbdtbPoint.node().getBBox().x+4
-        y2 = jbdtbPoint.node().getBBox().y+4
-        drawConnectorLine([x1, y1],[x2, y2], window.jakartaCanvas, c.origin_code)
-
-# DARI ORIGIN DISTRICT KE CY/DISTRICT CY/SUB DISTRICT CY
-# Fungsi untuk menkoneksikan antara Origin District dengan CY di peta Jabodetabek
-# Jika fungsi ini akan di panggil dari respond js controller,
-# tambahkan parameter data hasil filter ke dalam fungsi ini
-# Saat ini untuk menampilkan CY yang terkait dengan origin menggunakan data
-# window.movementIn yang di-filter dengan "if"
-# Parameters:
-# - originDistrict
-# - dot
-# - canvas
-# - data
-window.connectToJabodetabekCy = (originDistrict, dot, canvas, data) ->
-  # Untuk menghilangkan circle dari district di peta Jabodetabek
-  d3.selectAll(".dot-district-jabodetabek").remove()
-
-  # Untuk hidden semau CY di peta jabodetabek
-  d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
-
-  for mi in data
-    if mi.origin_district is originDistrict # note neccessary because 'connections' already containes filtered values
-      collectorYardsCode = d3.selectAll(".collector-yards")
-      collectorYardsCode.each (d) ->
-        if d.code is mi.destination_code
-          d3.select(this).attr("class", "collector-yards")
-          origin = [(dot.node().getBoundingClientRect().x-12), dot.node().getBoundingClientRect().y]
-          destination = [(parseInt(d3.select(this).attr("x"))+(rectSize/2)), (parseInt(d3.select(this).attr("y"))+(rectSize/2))]
-          drawConnectorLine(origin, destination, canvas, mi.destination_code)
-          write_data = [mi.destination_code, mi.destination_district, mi.weekly_volume]
-          appendResult($("#result_body table tbody"), write_data, "destination")
-
-# Fungsi untuk menkoneksikan antara Origin District dengan Sub District yang ada di peta Jabodetabek
-window.connectToJabodetabekSubDistrict = () ->
-  # Untuk menghilangkan circle dari district di peta jabodetabek
-  d3.selectAll(".dot-district-jabodetabek").remove()
-
-  # Untuk hidden semau CY di peta jabodetabek
-  d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
-
-  alert("Sub District Coordinate is Not Available")
-
-# Fungsi untuk menkoneksikan antara Origin District dengan CY di peta Jabodetabek
-# Jika fungsi ini akan di panggil dari respond js controller,
-# tambahkan parameter data hasil filter ke dalam fungsi ini
-# Saat ini untuk menampilkan District yang terkait dengan Origin District menggunakan data
-# window.movementIn yang di-filter dengan "if"
-# Parameters:
-# - originDistrict
-# - dot
-# - canvas
-# - data
-window.connectToJabodetabekDistrict = (originDistrict, dot, canvas, data) ->
-  # Untuk hidden semau CY di peta jabodetabek
-  d3.selectAll(".collector-yards").attr("class", "collector-yards hidden")
-  district = d3.selectAll(".jabodetabek-area")
-
-  for mi in data
-    if originDistrict is mi.origin_district
-      district.each (d) ->
-        if d.properties.KAB_KOTA is mi.destination_district
-          # Panggil fungsi untuk menampilkan circle CY District di peta Jabodetabek
-          jbdtbPoint = jabodetabekPointDistrict(d)
-
-          # Mendeklarasikan variabel yang akan dikirim ke fungsi untuk menarik garis antara Origin District dengan District Jabodetabek
-          # getBoundingClientRect() untuk mendapatkan koordinat elemen terhadap halaman
-          origin = [(dot.node().getBoundingClientRect().x-12), dot.node().getBoundingClientRect().y]
-          destination = [(jbdtbPoint.node().getBoundingClientRect().x-11), (jbdtbPoint.node().getBoundingClientRect().y+4)]
-
-          # Panggil fungsi membuat garis
-          drawConnectorLine(origin, destination, canvas, mi.destination_code)
 
 # Fungsi untuk membuat line atau garis
 # Parameters:
@@ -348,77 +203,6 @@ window.appendResult = (target, data, type) ->
 
   target.append(content)
 
-# Fungsi untuk memanggil Origin District di peta Jawa
-# Mungkin fungsi ini akan di-panggil saat klik pilihan di autocomplete
-# Parameters:
-# - district_name: string, untuk memanggil path district yang sesuai dengan district_name yang dikirim
-# - connections: array (of movements object)
-window.connectFromOrigin = (district_name, connections) ->
-  # Untuk menghilangkan circle dari district di peta jabodetabek
-  d3.selectAll(".center-dot-district").remove()
-
-  # Untuk mengkosongkan html elemen #line_canvas
-  d3.select("#line_canvas").html("")
-  d3.selectAll("line.connector-line").remove()
-
-  # Untuk mengkosongkan html elemen result data
-  $("#result_body table tbody").html("")
-
-  # Mendeklarasikan variabel lineCanvas
-  lineCanvas = d3.select("#line_canvas").append("svg")
-    .attr("height", $(window).height() - 50)
-    .attr("width", $("#maps").width())
-
-  # Select semua path District pada peta Jawa
-  d3.selectAll(".java-area").each (d) ->
-    d3.select(this).style("fill", "#e9e5dc")
-
-    # Membuat titik tengah dari District pada peta Jawa
-    dot = window.javaCanvas.append("circle")
-      .attr("class", "center-dot-district")
-      .attr("cx", window.javaPath.centroid(d)[0])
-      .attr("cy", window.javaPath.centroid(d)[1])
-      .attr("r", 0)
-      .style("fill", "#428bca")
-
-    # Mencocokkan antara properties path District dengan district_name yang dikirim
-    if d.properties.KAB_KOTA is district_name
-      centralizeSelectedArea(window.javaCanvas, window.javaPath, d)
-      d3.select(this).style("fill", "#428bca")
-      d3.csv connections, (result) ->
-        if $("#destination_type_collector_yards").is(":checked")
-          connectToJabodetabekCy(d.properties.KAB_KOTA, dot, lineCanvas, result)
-        else if $("#destination_type_cy_sub_districts").is(":checked")
-          connectToJabodetabekSubDistrict(d.properties.KAB_KOTA, dot, lineCanvas, result)
-        else if $("#destination_type_cy_districts").is(":checked")
-          connectToJabodetabekDistrict(d.properties.KAB_KOTA, dot, lineCanvas, result)
-
-# Parameters:
-# - cy_code: string
-# - connections: array (of movements object)
-window.connectFromCy = (cy_code, connections) ->
-  selectedCy = null;
-  $("#result_body table tbody").html("")
-  d3.selectAll("line.connector-line").remove()
-  d3.select("#line_canvas").html("")
-  d3.selectAll(".dot-district-jabodetabek").remove()
-  d3.selectAll(".collector-yards").each (d) ->
-    if d3.select(this).attr("code") is cy_code
-      d3.select(this).attr("selected", true)
-      selectedCy = d3.select(this)
-    else
-      d3.select(this).attr("selected", null)
-  window.selectedCode = cy_code
-  console.log "data_url: ", data_url
-
-  d3.csv connections, (result) ->
-    if $("#destination_type_collector_yards").is(":checked")
-      connectToCy(selectedCy, result)
-    else if $("#destination_type_cy_sub_districts").is(":checked")
-      connectToCySubDistrict(selectedCy, result)
-    else if $("#destination_type_cy_districts").is(":checked")
-      connectToCyDistrict(selectedCy, result)
-
 # Fungsi untuk mengaktifkan garis penghubung saat klik data hasil koneksi
 window.activeConnectorLine = (code) ->
   connctor_line = $("line.connector-line")
@@ -438,40 +222,39 @@ window.activeConnectorLine = (code) ->
 
 window.connectAllCyToCy = ->
   console.log "masuk.."
-  d3.selectAll(".collector-yards").each (d) ->
-    if d3.select(this).attr("type") == "CY"
-      x1 = parseInt(d3.select(this).attr("x"))+(rectSize/2)
-      y1 = parseInt(d3.select(this).attr("y"))+(rectSize/2)
-      for mo in window.movementOut
-        if mo.origin_code is d3.select(this).attr("code")
-          dst = window.jakartaProjection([mo.destination_X, mo.destination_Y])
-          window.jakartaCanvas.append("rect")
-            .attr("x", dst[0] )
-            .attr("y", dst[1] )
-            .attr("code", mo.origin_code)
-            .attr("type", "CY")
-            .attr("width", rectSize)
-            .attr("height", rectSize)
-            .style("fill", "green")
-            .style("opacity", 0.5)
-            .attr("class", "collector-yards")
-          drawConnectorLine([x1, y1], [(dst[0]+(rectSize/2)), (dst[1]+(rectSize/2))], window.jakartaCanvas, mo.origin_code)
-    else
-      x1 = d3.select(this).attr("cx")
-      y1 = d3.select(this).attr("cy")
-      for mo in window.movementOut
-        if mo.origin_code is d3.select(this).attr("code")
-          dst = window.jakartaProjection([mo.destination_X, mo.destination_Y])
-          window.jakartaCanvas.append("circle")
-            .attr("r", circleRadius)
-            .attr("cx", dst[0] )
-            .attr("cy", dst[1] )
-            .attr("code", mo.origin_code)
-            .attr("type", "LBM")
-            .style("fill", "red")
-            .style("opacity", 0.5)
-            .attr("class", "collector-yards")
-          drawConnectorLine([x1, y1], dst, window.jakartaCanvas, mo.origin_code)   
+  d3.csv "/map/collector_yards.csv", (result) ->
+    for re in result
+      if re.type is "CY"
+        coordinate = window.jakartaProjection([re.X, re.Y])
+        for mo in window.movementOut
+          if mo.origin_code is re.code
+            dst = window.jakartaProjection([mo.destination_x_original, mo.destination_y_original])
+            window.jakartaCanvas.append("rect")
+              .attr("x", dst[0])
+              .attr("y", dst[1])
+              .attr("code", mo.origin_code)
+              .attr("type", "CY")
+              .attr("width", rectSize)
+              .attr("height", rectSize)
+              .style("fill", "green")
+              .style("opacity", 0.5)
+              .attr("class", "cy-movement-out")
+            drawConnectorLine([(coordinate[0]+(rectSize/2)), (coordinate[1]+(rectSize/2))], [(dst[0]+(rectSize/2)), (dst[1]+(rectSize/2))], window.jakartaCanvas, mo.origin_code)
+      else
+        coordinate = window.jakartaProjection([re.X, re.Y])
+        for mo in window.movementOut
+          if mo.origin_code is re.code
+            dst = window.jakartaProjection([mo.destination_x_original, mo.destination_y_original])
+            window.jakartaCanvas.append("circle")
+              .attr("r", circleRadius)
+              .attr("cx", dst[0])
+              .attr("cy", dst[1])
+              .attr("code", mo.origin_code)
+              .attr("type", "LBM")
+              .style("fill", "red")
+              .style("opacity", 0.5)
+              .attr("class", "cy-movement-out")
+            drawConnectorLine([x1, y1], dst, window.jakartaCanvas, mo.origin_code)
 
 ready = ->
   # Global variabel
@@ -480,14 +263,14 @@ ready = ->
   jakartaHeight = winHeight * 0.65
   javaHeight = winHeight * 0.35
 
-  # d3.csv "/map/movement_in.csv", (result) ->
-  #   window.movementIn = result
+  d3.csv "/map/movement_in.csv", (result) ->
+    window.movementIn = result
 
   d3.csv "/map/movement_out.csv", (result) ->
     window.movementOut = result
 
-  d3.csv "/map/collector_yards.csv", (collectorYards) ->
-    window.collectorYards = collectorYards
+  # d3.csv "/map/collector_yards.csv", (collectorYards) ->
+  #   window.collectorYards = collectorYards
 
   window.jakartaProjection = d3.geo.mercator().rotate([-105.88,5.87,0]).scale(width*30).translate([0, 0])
   window.jakartaPath = d3.geo.path().projection(window.jakartaProjection)
@@ -498,6 +281,7 @@ ready = ->
   setMapsRatio(winHeight,jakartaHeight,javaHeight)
   loadJabodetabekMap(width,winHeight,jakartaHeight)
   loadJavaMap(width,winHeight,javaHeight)
+  connectAllCyToCy()
 
   # Untuk percobaan
   $("body").on "click", ".btn-call-origin", (e) ->
