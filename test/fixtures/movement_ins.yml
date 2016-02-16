@@ -1,0 +1,43 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  movement_id: 1
+  origin_district: MyString
+  collector_type_id: 1
+  species_type_id: 1
+  number: 1
+  weekly_volume: 1
+  destination_code: MyString
+  destination_name: MyString
+  destination_x: 1.5
+  destination_y: 1.5
+  destination_district: MyString
+  destination_subdistrict: MyString
+  point_x_subdistrict_destination: 1.5
+  point_y_subdistrict_destination: 1.5
+  object_id_subdistrict_destination: MyString
+  in_km_distance_origin_district_destination: 1.5
+  destination_in_cluster: MyString
+  destination_cluster_name: MyString
+  cy_id: MyString
+
+two:
+  movement_id: 1
+  origin_district: MyString
+  collector_type_id: 1
+  species_type_id: 1
+  number: 1
+  weekly_volume: 1
+  destination_code: MyString
+  destination_name: MyString
+  destination_x: 1.5
+  destination_y: 1.5
+  destination_district: MyString
+  destination_subdistrict: MyString
+  point_x_subdistrict_destination: 1.5
+  point_y_subdistrict_destination: 1.5
+  object_id_subdistrict_destination: MyString
+  in_km_distance_origin_district_destination: 1.5
+  destination_in_cluster: MyString
+  destination_cluster_name: MyString
+  cy_id: MyString
