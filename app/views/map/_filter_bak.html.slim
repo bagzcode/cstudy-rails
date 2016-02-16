@@ -1,0 +1,48 @@
+#filter_wrapper
+  / .page-header
+  h3 Filter
+
+  = form_tag movements_path, method: "GET" do
+
+    .row
+      .col-md-12
+        .form-group
+          label Search by name or code (or click on the map)
+          = text_field_tag "keyword", "", class: "form-control", data: { source: movements_path }
+
+    .row
+      .col-md-6
+        .form-group
+          label Source
+          - %w(origin_district cy_code cy_sub_district).each_with_index do |item, index|
+            .radio
+              label
+                = radio_button_tag "source_type", item, (index == 0)
+                = item.titleize.upcase
+      .col-md-6
+        .form-group
+          label Destination
+          - %w(collector_yards cy_sub_districts cy_districts).each_with_index do |item, index|
+            .radio
+              label
+                = radio_button_tag "destination_type", item, (index == 0)
+                = item.titleize.upcase
+    .row
+      .col-md-12
+        .form-group
+          label = "Species"
+          - SpeciesType.all.each do |s|
+            .checkbox
+              label
+                = check_box_tag "species_types[]", s.id, true
+                = s.code.blank? ? "<i>blank</i>".html_safe : s.code
+
+      = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
+      = link_to "Sukabumi", "#", class: "btn btn-link btn-call-origin", data: { district: "SUKABUMI" }
+      = link_to "Bogor", "#", class: "btn btn-link btn-call-origin", data: { district: "BOGOR" }
+      = link_to "Tanggerang", "#", class: "btn btn-link btn-call-origin", data: { district: "TANGERANG" }
+      = link_to "D-BGR-195", "#", class: "btn btn-link btn-call-cy", data: { code: "D-BGR-195" }
+      = link_to "D-BGR-073", "#", class: "btn btn-link btn-call-cy", data: { code: "D-BGR-073" }
+
+    / = submit_tag "OK", class: "btn btn-primary"
+    / = link_to "Clear", root_path, class: "btn btn-link"
