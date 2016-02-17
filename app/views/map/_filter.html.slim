@@ -1,76 +1,67 @@
 #filter_wrapper
   / .page-header
   h3 Filter
+  .row
+    .col-md-4
+      .form-group
+        label = "Type"
+        - CollectorType.all.each do |s|
+          .checkbox
+            label
+              = check_box_tag "collector_types[]", s.id, true
+              = s.code.blank? ? "<i>blank</i>".html_safe : s.code
+    .col-md-4
+      .form-group
+        label = "Species"
+        - SpeciesType.all.each do |s|
+          .checkbox
+            label
+              = check_box_tag "species_types[]", s.id, true
+              = s.code.blank? ? "<i>blank</i>".html_safe : s.code
+    .col-md-4
+      .form-group
+        label = "Movement type"
+        - %w(in out).each_with_index do |item, index|
+          .checkbox
+            label
+              = check_box_tag "movement_types[]", item, true
+              = item.titleize.upcase
 
-  = form_tag movements_path, method: "GET" do
+  .row
+    .col-md-12
+      .form-group
+        label = "Weekly Volume"
+        .row
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | From
+              = number_field_tag "weekly_volume[from]", "", class: "form-control"
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | To
+              = number_field_tag "weekly_volume[to]", "", class: "form-control"
 
-    / .row
-    /   .col-md-12
-    /     .form-group
-    /       label Search by name or code (or click on the map)
-    /       = text_field_tag "keyword", "", class: "form-control", data: { source: movements_path }
+  .row
+    .col-md-12
+      .form-group
+        label = "Distance (in km)"
+        .row
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | From
+              = number_field_tag "distance[from]", "", class: "form-control"
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | To
+              = number_field_tag "distance[to]", "", class: "form-control"
 
-    .row
-      .col-md-4
-        .form-group
-          label = "Type"
-          - %w(AB AS BR CY FA LBM LC blank).each_with_index do |item, index|
-            .checkbox
-              label
-                = check_box_tag "types[]", item, true
-                = item == 'blank' ? "<i>blank</i>".html_safe : item.titleize.upcase
-      .col-md-4
-        .form-group
-          label = "Species"
-          - SpeciesType.all.each do |s|
-            .checkbox
-              label
-                = check_box_tag "species_types[]", s.id, true
-                = s.code.blank? ? "<i>blank</i>".html_safe : s.code
-      .col-md-4
-        .form-group
-          label = "Movement type"
-          - %w(in out).each_with_index do |item, index|
-            .checkbox
-              label
-                = check_box_tag "movement_types[]", item, true
-                = item.titleize.upcase
-
-    .row
-      .col-md-12
-        .form-group
-          label = "Weekly Volume"
-          .row
-            .col-md-6
-              .input-group
-                .input-group-addon
-                  | From
-                = number_field_tag "weekly_volume[from]", "", class: "form-control"
-            .col-md-6
-              .input-group
-                .input-group-addon
-                  | To
-                = number_field_tag "weekly_volume[to]", "", class: "form-control"
-
-    .row
-      .col-md-12
-        .form-group
-          label = "Distance (in km)"
-          .row
-            .col-md-6
-              .input-group
-                .input-group-addon
-                  | From
-                = number_field_tag "distance[from]", "", class: "form-control"
-            .col-md-6
-              .input-group
-                .input-group-addon
-                  | To
-                = number_field_tag "distance[to]", "", class: "form-control"
-
-    .row
-      .col-md-12
-        = submit_tag "Show results", class: "btn btn-primary"
+  .row
+    .col-md-12
+      = submit_tag "Show results", class: "btn btn-primary"
 
 
       / = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
