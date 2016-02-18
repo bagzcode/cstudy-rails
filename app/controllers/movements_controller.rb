@@ -18,43 +18,12 @@ class MovementsController < ApplicationController
   end
 
   def results
-    @movement_ins = MovementIn
-    @movement_outs = MovementOut
-
-    if params[:species_types]
-      @movement_ins.where("species_type_id IN (?)", params[:species_types])
-      @movement_outs.where("species_type_id IN (?)", params[:species_types])
-    end
-
-    if params[:collector_types]
-      @movement_ins.where("collector_type_id IN (?)", params[:collector_types])
-      @movement_outs.where("collector_type_id IN (?)", params[:collector_types])
-    end
-
-    if params[:weekly_volume][:from]
-      # @movement_ins.where("weekly_volume >= ?", params[:weekly_volume][:from])
-      # @movement_outs.where("weekly_volume >= ?", params[:weekly_volume][:from])
-    end
-
-    if params[:weekly_volume][:to]
-      # @movement_ins.where("weekly_volume <= ?", params[:weekly_volume][:to])
-      # @movement_outs.where("weekly_volume <= ?", params[:weekly_volume][:to])
-    end
-
-    if params[:distance][:from]
-      # @movement_ins.where("distance >= ?", params[:distance][:from])
-      # @movement_outs.where("distance >= ?", params[:distance][:from])
-    end
-
-    if params[:distance][:to]
-      # @movement_ins.where("distance <= ?", params[:distance][:to])
-      # @movement_outs.where("distance <= ?", params[:distance][:to])
-    end
-
-    @movement_ins.group("destination_id")
-    @movement_outs.group("origin_id")
-
-    # TODO: Probably add 'HAVING' clause here based in weekly_volume and distance summary
+    @movement_outs = MovementOut.apply_scopes(params[:species_types],
+                                            params[:collector_types],
+                                            params[:collector_distance][:from],
+                                            params[:collector_distance][:to],
+                                            params[:weekly_volume][:from],
+                                            params[:weekly_volume][:to])
 
     respond_to do |format|
       format.js { render layout: false }

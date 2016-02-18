@@ -2,14 +2,14 @@
   / .page-header
   h3 Filter
   .row
-    .col-md-4
-      .form-group
-        label = "Type"
-        - CollectorType.all.each do |s|
-          .checkbox
-            label
-              = check_box_tag "collector_types[]", s.id, true
-              = s.code.blank? ? "<i>blank</i>".html_safe : s.code
+    / .col-md-4
+    /   .form-group
+    /     label = "Movement type"
+    /     - %w(in out).each_with_index do |item, index|
+    /       .checkbox
+    /         label
+    /           = check_box_tag "movement_types[]", item, true
+    /           = item.titleize.upcase
     .col-md-4
       .form-group
         label = "Species"
@@ -20,12 +20,12 @@
               = s.code.blank? ? "<i>blank</i>".html_safe : s.code
     .col-md-4
       .form-group
-        label = "Movement type"
-        - %w(in out).each_with_index do |item, index|
+        label = "Type"
+        - CollectorType.all.each do |s|
           .checkbox
             label
-              = check_box_tag "movement_types[]", item, true
-              = item.titleize.upcase
+              = check_box_tag "collector_types[]", s.id, true
+              = s.code.blank? ? "<i>blank</i>".html_safe : s.code
 
   .row
     .col-md-12
@@ -46,22 +46,46 @@
   .row
     .col-md-12
       .form-group
-        label = "Distance (in km)"
+        label = "Distance between collectors (in JABODETABEK)"
         .row
           .col-md-6
             .input-group
               .input-group-addon
                 | From
-              = number_field_tag "distance[from]", "", class: "form-control"
+              = number_field_tag "collector_distance[from]", "", class: "form-control"
+              .input-group-addon
+                | km
           .col-md-6
             .input-group
               .input-group-addon
                 | To
-              = number_field_tag "distance[to]", "", class: "form-control"
+              = number_field_tag "collector_distance[to]", "", class: "form-control"
+              .input-group-addon
+                | km
+
+  / .row
+  /   .col-md-12
+  /     .form-group
+  /       label = "Origin Distance"
+  /       .row
+  /         .col-md-6
+  /           .input-group
+  /             .input-group-addon
+  /               | From
+  /             = number_field_tag "origin_distance[from]", "", class: "form-control"
+  /             .input-group-addon
+  /               | km
+  /         .col-md-6
+  /           .input-group
+  /             .input-group-addon
+  /               | To
+  /             = number_field_tag "origin_distance[to]", "", class: "form-control"
+  /             .input-group-addon
+  /               | km
 
   .row
     .col-md-12
-      = submit_tag "Show results", class: "btn btn-primary"
+      = submit_tag "Show results", class: "btn btn-primary", id: "show_results", data: { url: results_movements_path }
 
 
       / = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }

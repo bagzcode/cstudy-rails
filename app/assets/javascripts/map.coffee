@@ -281,7 +281,7 @@ ready = ->
   setMapsRatio(winHeight,jakartaHeight,javaHeight)
   loadJabodetabekMap(width,winHeight,jakartaHeight)
   loadJavaMap(width,winHeight,javaHeight)
-  connectAllCyToCy()
+  # connectAllCyToCy()
 
   # Untuk percobaan
   $("body").on "click", ".btn-call-origin", (e) ->

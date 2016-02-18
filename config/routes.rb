@@ -9,9 +9,11 @@ Rails.application.routes.draw do
   get 'map/movement_out' => 'map#movement_out'
   get 'map/collector_yards' => 'map#collector_yards'
 
-  get 'results' => 'movements#results'
-
-  resources :movements
+  resources :movements do
+    collection do
+      get 'results'
+    end
+  end
 
   root 'map#index'
 end
