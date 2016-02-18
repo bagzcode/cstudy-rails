@@ -1,36 +1,23 @@
 class AddDefaultGroupByFields < ActiveRecord::Migration
+  # If destination_lbm_cy_id is null, we should use destination_sub_district or if it is null as well,
+  # we should use destination_district as a code. Hence, a new field destination_code is added.
+
   def change
-    add_column :movement_ins, :code, :string
-    add_column :movement_outs, :code, :string
+    add_column :movement_outs, :destination_code, :string
 
     # update movement outs data
     MovementOut.all.each do |mo|
-      if mo.origin_code.blank?
-        if mo.origin_sub_district.blank?
-          mo.code = mo.origin_district
+      if mo.destination_lbm_cy_id.blank?
+        if mo.destination_sub_district.blank?
+          mo.destination_code = mo.destination_district
         else
-          mo.code = mo.origin_sub_district + "_" + mo.origin_district
+          mo.destination_code = mo.destination_sub_district + "_" + mo.destination_district
         end
       else
-        mo.code = mo.origin_code
+        mo.destination_code = mo.destination_lbm_cy_id
       end
 
       mo.save
-    end
-
-    # update movement ins data
-    MovementIn.all.each do |mi|
-      if mi.destination_code.blank?
-        if mi.destination_subdistrict.blank?
-          mi.code = mi.destination_district
-        else
-          mi.code = mi.destination_subdistrict + "_" + mi.destination_district
-        end
-      else
-        mi.code = mi.destination_code
-      end
-
-      mi.save
     end
   end
 end

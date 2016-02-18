@@ -71,5 +71,8 @@ ready = ->
       $("<li>").append(content).appendTo ul
 
 
+
+
+
 $(document).ready ready
 $(document).on 'page:update', ready

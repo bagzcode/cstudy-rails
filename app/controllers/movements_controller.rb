@@ -31,31 +31,28 @@ class MovementsController < ApplicationController
       @movement_outs.where("collector_type_id IN (?)", params[:collector_types])
     end
 
-    # if params[:weekly_volume][:from]
-    #   @movement_ins.where("weekly_volume >= ?", params[:weekly_volume][:from])
-    #   @movement_outs.where("weekly_volume >= ?", params[:weekly_volume][:from])
-    # end
+    if params[:weekly_volume][:from]
+      # @movement_ins.where("weekly_volume >= ?", params[:weekly_volume][:from])
+      # @movement_outs.where("weekly_volume >= ?", params[:weekly_volume][:from])
+    end
 
-    # if params[:weekly_volume][:to]
-    #   @movement_ins.where("weekly_volume <= ?", params[:weekly_volume][:to])
-    #   @movement_outs.where("weekly_volume <= ?", params[:weekly_volume][:to])
-    # end
+    if params[:weekly_volume][:to]
+      # @movement_ins.where("weekly_volume <= ?", params[:weekly_volume][:to])
+      # @movement_outs.where("weekly_volume <= ?", params[:weekly_volume][:to])
+    end
 
-    # if params[:distance][:from]
-    #   @movement_ins.where("distance >= ?", params[:distance][:from])
-    #   @movement_outs.where("distance >= ?", params[:distance][:from])
-    # end
+    if params[:distance][:from]
+      # @movement_ins.where("distance >= ?", params[:distance][:from])
+      # @movement_outs.where("distance >= ?", params[:distance][:from])
+    end
 
-    # if params[:distance][:to]
-    #   @movement_ins.where("distance <= ?", params[:distance][:to])
-    #   @movement_outs.where("distance <= ?", params[:distance][:to])
-    # end
+    if params[:distance][:to]
+      # @movement_ins.where("distance <= ?", params[:distance][:to])
+      # @movement_outs.where("distance <= ?", params[:distance][:to])
+    end
 
-    # default group_by, the field 'code' has been set if collector code is missing,
-    # it uses sub district name and district name concatenated, or if sub district is missing,
-    # then it uses only district.
-    @movement_ins.group("code")
-    @movement_outs.group("code")
+    @movement_ins.group("destination_id")
+    @movement_outs.group("origin_id")
 
     # TODO: Probably add 'HAVING' clause here based in weekly_volume and distance summary
 
