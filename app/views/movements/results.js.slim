@@ -1,1 +1,4 @@
 | $("#results").html("#{ j render 'map/results', movement_outs: @movement_outs }");
+| var data = JSON.parse("#{ j @movement_outs.to_json.html_safe }");
+| cyFiltered(data);
+// | console.log(data);
