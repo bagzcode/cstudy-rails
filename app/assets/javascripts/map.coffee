@@ -8,6 +8,7 @@ window.javaProjection = null
 window.javaPath = null
 
 window.collectorYards = null
+window.screenHeight = null
 window.movementIn = null
 window.movementOut = null
 window.circleRadius = 5;
@@ -262,6 +263,7 @@ ready = ->
   winHeight = $(window).height() - 50
   jakartaHeight = winHeight * 0.65
   javaHeight = winHeight * 0.35
+  window.screenHeight = winHeight
 
   d3.csv "/map/movement_in.csv", (result) ->
     window.movementIn = result

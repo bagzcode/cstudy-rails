@@ -11,37 +11,42 @@
           .movement-wrapper
             h5 = link_to "#{origin_code}", "#mo_#{origin_code}", data: { toggle: "collapse" }
             .collapse id="mo_#{origin_code}"
-              table.table.table-bordered.table-condensed
-                thead
-                  tr.active
-                    th Origin(s)
-                    th Destination(s)
-                tbody
-                  tr
-                    td
-                      ul
-                        - movements.first.movement_ins.each do |mi|
-                          li
-                            = mi.origin_district
-                            ul
+              .row
+                .col-md-12
+                  small = link_to "Show on map", "#{origin_code}", class: "link-show-on-map"
+              .row
+                .col-md-11
+                  table.table.table-bordered.table-condensed
+                    thead
+                      tr.active
+                        th Origin(s)
+                        th Destination(s)
+                    tbody
+                      tr
+                        td
+                          ul
+                            - movements.first.movement_ins.each do |mi|
                               li
-                                | Volume:&nbsp;
-                                strong = mi.weekly_volume
+                                = mi.origin_district
+                                ul
+                                  li
+                                    | Volume:&nbsp;
+                                    strong = mi.weekly_volume
+                                  li
+                                    | Distance:&nbsp;
+                                    strong = "#{ mi.in_km_distance_origin_district_destination } km"
+                        td
+                          ul
+                            - movements.each do |mo|
                               li
-                                | Distance:&nbsp;
-                                strong = "#{ mi.in_km_distance_origin_district_destination } km"
-                    td
-                      ul
-                        - movements.each do |mo|
-                          li
-                            = mo.destination_code.blank? ? "N/A" : mo.destination_code.split("_").join(", ")
-                            ul
-                              li
-                                | Volume:&nbsp;
-                                strong = mo.weekly_volume
-                              li
-                                | Distance:&nbsp;
-                                strong = "#{ mo.in_km_distance_origin_destination } km"
+                                = mo.destination_code.blank? ? "N/A" : mo.destination_code.split("_").join(", ")
+                                ul
+                                  li
+                                    | Volume:&nbsp;
+                                    strong = mo.weekly_volume
+                                  li
+                                    | Distance:&nbsp;
+                                    strong = "#{ mo.in_km_distance_origin_destination } km"
 
 
       / - unless movement_ins.nil?
