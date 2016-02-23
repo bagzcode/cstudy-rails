@@ -63,7 +63,8 @@ window.loadJabodetabekMap = (width,winHeight,jakartaHeight) ->
         d3.select(this).attr("title", d.properties.KAB_KOTA)
 
     # Panggil fungsi untuk menampilkan titik CY/LBM di peta Jabodetabek
-    loadCollectorYards()
+    # loadCollectorYards()
+    loadAllMovementOuts()
 
 # Fungsi untuk menampilkan peta pulau jawa
 # Fungsi ini dipanggil saat document ready
