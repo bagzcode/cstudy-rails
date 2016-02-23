@@ -16,32 +16,69 @@
                   tr.active
                     th Origin(s)
                     th Destination(s)
-                tbody
+                tbody style="font-size: 0.9em"
                   tr
+                    td style="width: 50%"
+                      - total_in = 0
+                      - movements.first.movement_ins.each do |mi|
+                        - total_in += (mi.weekly_volume.nil? ? 0 : mi.weekly_volume)
+                        .row.box
+                          .col-md-12
+                            .row
+                              .col-md-12: strong = mi.origin_district
+                            .row
+                              .col-md-3: .label.label-success Volume
+                              .col-md-9 = mi.weekly_volume
+                            .row
+                              .col-md-3: .label.label-warning Distance
+                              .col-md-9 = "#{ mi.in_km_distance_origin_district_destination } km"
+                    td style="width: 50%"
+                      - total_out = 0
+                      - movements.each do |mo|
+                        - total_out += (mo.weekly_volume.nil? ? 0 : mo.weekly_volume)
+                        .row.box
+                          .col-md-12
+                            .row
+                              .col-md-12: strong = mo.destination_code.blank? ? "N/A" : mo.destination_code.split("_").join(", ")
+                            .row
+                              .col-md-3: .label.label-success Volume
+                              .col-md-9 = mo.weekly_volume
+                            .row
+                              .col-md-3: .label.label-warning Distance
+                              .col-md-9 = "#{ mo.in_km_distance_origin_destination } km"
+                  tr.active
                     td
-                      ul
-                        - movements.first.movement_ins.each do |mi|
-                          li
-                            = mi.origin_district
-                            ul
-                              li
-                                | Volume:&nbsp;
-                                strong = mi.weekly_volume
-                              li
-                                | Distance:&nbsp;
-                                strong = "#{ mi.in_km_distance_origin_district_destination } km"
+                      | Total Volume:&nbsp;
+                      strong: i = total_in
                     td
-                      ul
-                        - movements.each do |mo|
-                          li
-                            = mo.destination_code.blank? ? "N/A" : mo.destination_code.split("_").join(", ")
-                            ul
-                              li
-                                | Volume:&nbsp;
-                                strong = mo.weekly_volume
-                              li
-                                | Distance:&nbsp;
-                                strong = "#{ mo.in_km_distance_origin_destination } km"
+                      | Total Volume:&nbsp;
+                      strong: i = total_out
+
+                  / tr
+                  /   td
+                  /     ul
+                  /       - movements.first.movement_ins.each do |mi|
+                  /         li
+                  /           = mi.origin_district
+                  /           ul
+                  /             li
+                  /               | Volume:&nbsp;
+                  /               strong = mi.weekly_volume
+                  /             li
+                  /               | Distance:&nbsp;
+                  /               strong = "#{ mi.in_km_distance_origin_district_destination } km"
+                  /   td
+                  /     ul
+                  /       - movements.each do |mo|
+                  /         li
+                  /           = mo.destination_code.blank? ? "N/A" : mo.destination_code.split("_").join(", ")
+                  /           ul
+                  /             li
+                  /               | Volume:&nbsp;
+                  /               strong = mo.weekly_volume
+                  /             li
+                  /               | Distance:&nbsp;
+                  /               strong = "#{ mo.in_km_distance_origin_destination } km"
 
 
       / - unless movement_ins.nil?
