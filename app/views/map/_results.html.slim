@@ -11,6 +11,7 @@
           .movement-wrapper
             h5 = link_to "#{origin_code}", "#mo_#{origin_code}", data: { toggle: "collapse" }
             .collapse id="mo_#{origin_code}"
+              small = link_to "Show on map", origin_code, class: "link-show-on-map"
               table.table.table-bordered.table-condensed
                 thead
                   tr.active
