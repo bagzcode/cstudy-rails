@@ -87,9 +87,14 @@ ready = ->
         origin_distance:
           from: $("#origin_distance_from").val()
           to: $("#origin_distance_to").val()
-        collector_distance:
-          from: $("#collector_distance_from").val()
-          to: $("#collector_distance_to").val()
+
+  $("body").on "click", ".toggle-checkboxes", (e) ->
+    wrapper = $(this).closest(".form-group")
+    if $(this).is(":checked")
+      wrapper.find("input:checkbox").prop("checked", true)
+    else
+      wrapper.find("input:checkbox").prop("checked", false)
+
 
 
 $(document).ready ready

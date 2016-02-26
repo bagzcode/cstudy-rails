@@ -7,7 +7,7 @@
         .checkbox
           label
             = check_box_tag "toggle_movement", true, true, class: "toggle-checkboxes"
-            i = "All"
+            .toggle-checkboxes-label = "All"
         - %w(in out).each_with_index do |item, index|
           .checkbox
             label
@@ -18,7 +18,7 @@
         .checkbox
           label
             = check_box_tag "toggle_species", true, true, class: "toggle-checkboxes"
-            i = "All"
+            .toggle-checkboxes-label = "All"
         - SpeciesType.all.each do |s|
           - unless s.code.blank?
             .checkbox
@@ -31,12 +31,12 @@
         .checkbox
           label
             = check_box_tag "toggle_source_type", true, true, class: "toggle-checkboxes"
-            i = "All"
+            .toggle-checkboxes-label = "All"
         - CollectorType.all.each do |s|
           - unless s.code.blank?
             .checkbox
               label
-                = check_box_tag "collector_types[]", s.id, true
+                = check_box_tag "source_collector_types[]", s.id, true
                 = s.code
 
     .col-md-4
@@ -45,12 +45,12 @@
         .checkbox
           label
             = check_box_tag "toggle_destination_type", true, true, class: "toggle-checkboxes"
-            i = "All"
+            .toggle-checkboxes-label = "All"
         - CollectorType.all.each do |s|
           - unless s.code.blank?
             .checkbox
               label
-                = check_box_tag "collector_types[]", s.id, true
+                = check_box_tag "destination_collector_types[]", s.id, true
                 = s.code
 
   .row
@@ -93,7 +93,7 @@
     .col-md-8
       .form-group
         label = "Search"
-        = text_field_tag "collector_distance[from]", "", class: "form-control", placeholder: "Search by Code/Sub District/District"
+        = text_field_tag "keyword", "", class: "form-control", placeholder: "Search by Code/Sub District/District"
     .col-md-4
       = submit_tag "Show results", class: "btn btn-primary btn-block", id: "show_results", data: { url: results_movements_path }, style: "margin-top: 25px"
 
