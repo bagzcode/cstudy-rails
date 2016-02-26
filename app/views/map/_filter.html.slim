@@ -1,31 +1,57 @@
 #filter_wrapper
-  / .page-header
-  h3 Filter
+  br
   .row
-    / .col-md-4
-    /   .form-group
-    /     label = "Movement type"
-    /     - %w(in out).each_with_index do |item, index|
-    /       .checkbox
-    /         label
-    /           = check_box_tag "movement_types[]", item, true
-    /           = item.titleize.upcase
     .col-md-4
+      .form-group
+        label = "Movement"
+        .checkbox
+          label
+            = check_box_tag "toggle_movement", true, true, class: "toggle-checkboxes"
+            i = "All"
+        - %w(in out).each_with_index do |item, index|
+          .checkbox
+            label
+              = check_box_tag "movement_types[]", item, true
+              = item.titleize.upcase
       .form-group
         label = "Species"
+        .checkbox
+          label
+            = check_box_tag "toggle_species", true, true, class: "toggle-checkboxes"
+            i = "All"
         - SpeciesType.all.each do |s|
-          .checkbox
-            label
-              = check_box_tag "species_types[]", s.id, true
-              = s.code.blank? ? "<i>blank</i>".html_safe : s.code
+          - unless s.code.blank?
+            .checkbox
+              label
+                = check_box_tag "species_types[]", s.id, true
+                = s.code
     .col-md-4
       .form-group
-        label = "Type"
+        label = "Source Type"
+        .checkbox
+          label
+            = check_box_tag "toggle_source_type", true, true, class: "toggle-checkboxes"
+            i = "All"
         - CollectorType.all.each do |s|
-          .checkbox
-            label
-              = check_box_tag "collector_types[]", s.id, true
-              = s.code.blank? ? "<i>blank</i>".html_safe : s.code
+          - unless s.code.blank?
+            .checkbox
+              label
+                = check_box_tag "collector_types[]", s.id, true
+                = s.code
+
+    .col-md-4
+      .form-group
+        label = "Dest. Type"
+        .checkbox
+          label
+            = check_box_tag "toggle_destination_type", true, true, class: "toggle-checkboxes"
+            i = "All"
+        - CollectorType.all.each do |s|
+          - unless s.code.blank?
+            .checkbox
+              label
+                = check_box_tag "collector_types[]", s.id, true
+                = s.code
 
   .row
     .col-md-12
@@ -35,12 +61,12 @@
           .col-md-6
             .input-group
               .input-group-addon
-                | From
+                | Min.
               = number_field_tag "weekly_volume[from]", "", class: "form-control"
           .col-md-6
             .input-group
               .input-group-addon
-                | To
+                | Max.
               = number_field_tag "weekly_volume[to]", "", class: "form-control"
 
   .row
@@ -51,41 +77,25 @@
           .col-md-6
             .input-group
               .input-group-addon
-                | From
+                | Min.
               = number_field_tag "collector_distance[from]", "", class: "form-control"
               .input-group-addon
                 | km
           .col-md-6
             .input-group
               .input-group-addon
-                | To
+                | Max.
               = number_field_tag "collector_distance[to]", "", class: "form-control"
               .input-group-addon
                 | km
 
-  / .row
-  /   .col-md-12
-  /     .form-group
-  /       label = "Origin Distance"
-  /       .row
-  /         .col-md-6
-  /           .input-group
-  /             .input-group-addon
-  /               | From
-  /             = number_field_tag "origin_distance[from]", "", class: "form-control"
-  /             .input-group-addon
-  /               | km
-  /         .col-md-6
-  /           .input-group
-  /             .input-group-addon
-  /               | To
-  /             = number_field_tag "origin_distance[to]", "", class: "form-control"
-  /             .input-group-addon
-  /               | km
-
   .row
-    .col-md-12
-      = submit_tag "Show results", class: "btn btn-primary", id: "show_results", data: { url: results_movements_path }
+    .col-md-8
+      .form-group
+        label = "Search"
+        = text_field_tag "collector_distance[from]", "", class: "form-control", placeholder: "Search by Code/Sub District/District"
+    .col-md-4
+      = submit_tag "Show results", class: "btn btn-primary btn-block", id: "show_results", data: { url: results_movements_path }, style: "margin-top: 25px"
 
 
       / = link_to "Lebak", "#", class: "btn btn-link btn-call-origin", data: { district: "LEBAK" }
