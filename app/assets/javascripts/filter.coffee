@@ -70,7 +70,7 @@ ready = ->
 
   #     $("<li>").append(content).appendTo ul
 
-
+  # Handles sending filter on button click
   $("body").on "click", "#show_results", (e) ->
     e.preventDefault()
 
@@ -88,12 +88,26 @@ ready = ->
           from: $("#origin_distance_from").val()
           to: $("#origin_distance_to").val()
 
+  # Handles button for check/uncheck all checkboxes in a .form-group
   $("body").on "click", ".toggle-checkboxes", (e) ->
     wrapper = $(this).closest(".form-group")
     if $(this).is(":checked")
       wrapper.find("input:checkbox").prop("checked", true)
     else
       wrapper.find("input:checkbox").prop("checked", false)
+
+  # Unchecked .toggle-checkboxes when one or more of checkboxes are unchecked
+  $("body").on "click", "input:checkbox", (e) ->
+    wrapper = $(this).closest(".form-group")
+    unless wrapper is undefined
+      toggle = wrapper.find(".toggle-checkboxes")
+      unless toggle is undefined
+        unchecked = wrapper.find("input:checkbox").not(".toggle-checkboxes").not(":checked")
+        if unchecked.length is 0
+          toggle.prop("checked", true)
+        else
+          toggle.prop("checked", false)
+
 
 
 
