@@ -24,26 +24,23 @@ class MovementIn < ActiveRecord::Base
     where("destination_code in (?)", movements.map(&:destination_code))
   end
 
-  def self.select_all_destinations
-    select.("
-      destination_code,
-      destination_name,
-      destination_x,
-      destination_y,
-      destination_district,
-      destination_subdistrict,
-      point_x_subdistrict_destination,
-      point_y_subdistrict_destination,
-      object_id_subdistrict_destination,
-      destination_in_cluster,
-      destination_cluster_name
-    ").group("destination_code")
-  end
-
   def self.select_all_origins
     select.("origin_district").group("origin_district")
   end
 
+  def self.select_all_destinations
+    select("destination_code,
+            destination_name,
+            destination_x,
+            destination_y,
+            destination_district,
+            destination_subdistrict,
+            point_x_subdistrict_destination,
+            point_y_subdistrict_destination,
+            object_id_subdistrict_destination,
+            destination_in_cluster,
+            destination_cluster_name").group("destination_code")
+  end
 
   # def self.apply_scopes_with_destination_code(species_types, collector_types, distance_from, distance_to, weekly_volume_from, weekly_volume_to, destination_code)
   #   movements = select("destination_code")

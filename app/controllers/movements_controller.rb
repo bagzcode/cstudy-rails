@@ -23,7 +23,7 @@ class MovementsController < ApplicationController
                                             params[:collector_distance][:from],
                                             params[:collector_distance][:to],
                                             params[:weekly_volume][:from],
-                                            params[:weekly_volume][:to])
+                                            params[:weekly_volume][:to]).eager_load(:movement_ins)
 
     respond_to do |format|
       format.js { render layout: false }

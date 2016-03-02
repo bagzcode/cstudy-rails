@@ -26,37 +26,33 @@ class MovementOut < ActiveRecord::Base
     movements = movements.weekly_volume_from(weekly_volume_from) if weekly_volume_from.present?
     movements = movements.weekly_volume_to(weekly_volume_to) if weekly_volume_to.present?
 
-    where("origin_code in (?)", movements.map(&:origin_code))
+    movements
   end
 
   def self.select_all_origins
-    select.("
-      origin_code,
-      origin_name,
-      origin_district,
-      origin_sub_district,
-      origin_x,
-      origin_y
-    ").group("origin_code")
+    select("origin_code,
+            origin_name,
+            origin_district,
+            origin_sub_district,
+            origin_x,
+            origin_y").group("origin_code")
   end
 
   def self.select_all_destinations
-    select.("
-      name_destination,
-      destination_lbm_cy_id,
-      destination_district,
-      destination_sub_district,
-      destination_x_original,
-      destination_y_original,
-      xy,
-      point_x_subdistrict,
-      point_y_subdistrict,
-      object_id_destination,
-      in_km_distance_origin_destination,
-      origin_in_cluster,
-      cluster_name,
-      destination_code
-    ").group("destination_code")
+    select("name_destination,
+            destination_lbm_cy_id,
+            destination_district,
+            destination_sub_district,
+            destination_x_original,
+            destination_y_original,
+            xy,
+            point_x_subdistrict,
+            point_y_subdistrict,
+            object_id_destination,
+            in_km_distance_origin_destination,
+            origin_in_cluster,
+            cluster_name,
+            destination_code").group("destination_code")
   end
 
   # def self.apply_scopes(species_types, collector_types, collector_distance_from, collector_distance_to, weekly_volume_from, weekly_volume_to, origin_distance_from, origin_distance_to)
