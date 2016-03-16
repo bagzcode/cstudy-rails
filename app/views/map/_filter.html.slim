@@ -3,7 +3,7 @@
   .row
     .col-md-4
       .form-group
-        label = "Movement"
+        label = "Display Movement"
         .checkbox
           label
             = check_box_tag "toggle_movement", true, true, class: "toggle-checkboxes"
@@ -27,7 +27,7 @@
                 = s.code
     .col-md-4
       .form-group
-        label = "Source Type"
+        label = "Origin Type"
         .checkbox
           label
             = check_box_tag "toggle_source_type", true, true, class: "toggle-checkboxes"
@@ -36,7 +36,7 @@
           - unless s.code.blank?
             .checkbox
               label
-                = check_box_tag "source_collector_types[]", s.id, true
+                = check_box_tag "origin_collector_types[]", s.id, true
                 = s.code
 
     .col-md-4
@@ -56,18 +56,54 @@
   .row
     .col-md-12
       .form-group
-        label = "Weekly Volume"
+        label = "Origin Weekly Volume"
         .row
           .col-md-6
             .input-group
               .input-group-addon
                 | Min.
-              = number_field_tag "weekly_volume[from]", "", class: "form-control"
+              = number_field_tag "origin_weekly_volume[from]", "", class: "form-control"
           .col-md-6
             .input-group
               .input-group-addon
                 | Max.
-              = number_field_tag "weekly_volume[to]", "", class: "form-control"
+              = number_field_tag "origin_weekly_volume[to]", "", class: "form-control"
+
+  .row
+    .col-md-12
+      .form-group
+        label = "Dest. Weekly Volume"
+        .row
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | Min.
+              = number_field_tag "destination_weekly_volume[from]", "", class: "form-control"
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | Max.
+              = number_field_tag "destination_weekly_volume[to]", "", class: "form-control"
+
+  .row
+    .col-md-12
+      .form-group
+        label = "Distance origin (from Origin to JABODETABEK)"
+        .row
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | Min.
+              = number_field_tag "origin_distance[from]", "", class: "form-control"
+              .input-group-addon
+                | km
+          .col-md-6
+            .input-group
+              .input-group-addon
+                | Max.
+              = number_field_tag "origin_distance[to]", "", class: "form-control"
+              .input-group-addon
+                | km
 
   .row
     .col-md-12

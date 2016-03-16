@@ -12,7 +12,7 @@ class MapController < ApplicationController
     render json: MovementOut.select_all_origins # select all collectors from table movement_outs
   end
 
-  def collector_yards
-    send_data File.read(Rails.root.join("db", "master_cy_lbm.csv"))
-  end
+  # def collector_yards
+  #   send_data File.read(Rails.root.join("db", "master_cy_lbm.csv"))
+  # end
 end

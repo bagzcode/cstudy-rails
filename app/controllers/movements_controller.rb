@@ -18,12 +18,18 @@ class MovementsController < ApplicationController
   end
 
   def results
-    @movement_outs = MovementOut.apply_scopes(params[:species_types],
-                                            params[:collector_types],
+    @movement_outs = MovementOut.apply_scopes(params[:movement_types],
+                                            params[:species_types],
+                                            params[:origin_collector_types],
+                                            params[:destination_collector_types],
+                                            params[:origin_distance][:from],
+                                            params[:origin_distance][:to],
                                             params[:collector_distance][:from],
                                             params[:collector_distance][:to],
-                                            params[:weekly_volume][:from],
-                                            params[:weekly_volume][:to]).eager_load(:movement_ins)
+                                            params[:origin_weekly_volume][:from],
+                                            params[:origin_weekly_volume][:to],
+                                            params[:destination_weekly_volume][:from],
+                                            params[:destination_weekly_volume][:to])
 
     respond_to do |format|
       format.js { render layout: false }

@@ -71,6 +71,8 @@ ready = ->
   #     $("<li>").append(content).appendTo ul
 
   # Handles sending filter on button click
+  # It goes to movements#results and should returns script
+  #
   $("body").on "click", "#show_results", (e) ->
     e.preventDefault()
 
@@ -79,14 +81,24 @@ ready = ->
       dataType: 'script'
       data:
         movement_types: getSelectedCheckBoxes('movement_types[]')
-        collector_types: getSelectedCheckBoxes('collector_types[]')
         species_types: getSelectedCheckBoxes('species_types[]')
-        weekly_volume:
-          from: $("#weekly_volume_from").val()
-          to: $("#weekly_volume_to").val()
+        origin_collector_types: getSelectedCheckBoxes('origin_collector_types[]')
+        destination_collector_types: getSelectedCheckBoxes('destination_collector_types[]')
+        origin_weekly_volume:
+          from: $("#origin_weekly_volume_from").val()
+          to: $("#origin_weekly_volume_to").val()
+        destination_weekly_volume:
+          from: $("#destination_weekly_volume_from").val()
+          to: $("#destination_weekly_volume_to").val()
         origin_distance:
           from: $("#origin_distance_from").val()
           to: $("#origin_distance_to").val()
+        collector_distance:
+          from: $("#collector_distance_from").val()
+          to: $("#collector_distance_to").val()
+      error: (xhr, ajaxOptions, thrownError) ->
+        console.log xhr.status
+        console.log thrownError
 
   # Handles button for check/uncheck all checkboxes in a .form-group
   $("body").on "click", ".toggle-checkboxes", (e) ->
