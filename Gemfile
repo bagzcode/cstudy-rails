@@ -54,3 +54,5 @@ gem 'devise'
 gem 'has_scope'
 
 gem 'jquery-ui-sass-rails'
+
+gem 'coffee-script-source', '1.8.0'
